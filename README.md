@@ -7,12 +7,14 @@
 | 名称 | 地址 | 说明 |
 |------|------|------|
 | Awesome Claude Skills | https://github.com/ComposioHQ/awesome-claude-skills | 社区精选 Claude Skills 合集 |
+| Remotion Skills | https://github.com/remotion-dev/skills | Remotion 官方 Agent Skills |
 
 ## 本仓库 Skills
 
 | 名称 | 说明 |
 |------|------|
 | [huiwang-writing-style](./huiwang-writing-style/) | 《回望灯火阑珊》写作风格指南，适用于青春文学、成长小说、考研/奋斗题材的温情现实主义风格写作 |
+| [remotion](./remotion/) | Remotion 视频创作最佳实践，使用 React 编程式生成视频 |
 
 ---
 
@@ -95,6 +97,7 @@
 | [Canvas Design](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/canvas-design) | 使用设计哲学原则创建 PNG 和 PDF 视觉艺术 | awesome-claude-skills |
 | [imagen](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/imagen) | 使用 Google Gemini API 生成 UI 模型和插图图像 | awesome-claude-skills |
 | [Image Enhancer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/image-enhancer) | 通过增强分辨率和清晰度提升图像质量 | awesome-claude-skills |
+| **[remotion](https://github.com/luoli523/my_claude_skills/tree/main/remotion)** | 使用 React 编程式创建视频，含 30+ 最佳实践规则 | **本仓库** |
 | [Slack GIF Creator](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/slack-gif-creator) | 创建针对 Slack 优化的动画 GIF | awesome-claude-skills |
 | [Theme Factory](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/theme-factory) | 为工件应用专业字体和颜色主题，含 10 个预设选项 | awesome-claude-skills |
 | [Video Downloader](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/video-downloader) | 从 YouTube 等平台下载视频供离线使用 | awesome-claude-skills |
@@ -134,4 +137,4 @@
 
 ---
 
-*最后更新: 2025-01-26*
+*最后更新: 2026-01-26*
