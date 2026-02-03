@@ -2,6 +2,49 @@
 
 个人收藏和使用的 Claude Skills 集合。
 
+## Quick Start
+
+```bash
+# Install all skills (clone repos + create symlinks)
+./install.sh
+
+# Preview what would happen
+./install.sh --dry-run
+
+# List all managed skills
+./install.sh --list
+
+# Remove stale symlinks
+./install.sh --cleanup
+```
+
+**Prerequisites:** `python3` with `PyYAML` (auto-installed if missing)
+
+### How It Works
+
+1. `skills.yaml` defines skill sources: GitHub repos and local skills
+2. `install.sh` clones repos into `.repos/`, discovers skills (dirs containing `SKILL.md`), and creates symlinks in `~/.claude/skills/`
+3. Local skills (in this repo) take priority over repo skills with the same name
+4. Re-running is idempotent - only updates what changed
+
+### Adding a New Repo
+
+Edit `skills.yaml`:
+```yaml
+repos:
+  my-new-source:
+    url: https://github.com/user/repo.git
+    branch: main
+    skills_path: "."     # where to scan for skill dirs
+    include:             # optional: whitelist specific skills
+      - skill-a
+      - skill-b
+```
+
+Then run `./install.sh`.
+
+---
+
 ## Skills 资源备忘
 
 | 名称 | 地址 | 说明 |

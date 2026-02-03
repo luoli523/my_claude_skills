@@ -1,0 +1,36 @@
+# Skills Manager Configuration
+# Run ./install.sh to clone repos and create symlinks to ~/.claude/skills/
+
+clone_dir: .repos
+skills_dir: ~/.claude/skills
+
+repos:
+  awesome-claude-skills:
+    url: https://github.com/ComposioHQ/awesome-claude-skills.git
+    branch: master
+    skills_path: "."           # each top-level dir with SKILL.md is a skill
+
+  remotion-skills:
+    url: https://github.com/remotion-dev/skills.git
+    branch: main
+    skills_path: "skills"      # skills nested under skills/ subdir
+
+  baoyu-skills:
+    url: https://github.com/JimLiu/baoyu-skills.git
+    branch: main
+    skills_path: "skills"      # 15 个 baoyu-* 系列 skills
+    description: >
+      暴雨(baoyu)系列 Skills 合集，包含图片生成、漫画创作、封面设计、
+      信息图、幻灯片、文章配图、图片压缩、网页转 Markdown、
+      发布微信公众号/X(Twitter) 等 15 个 skills
+
+  anything-to-notebooklm:
+    url: https://github.com/joeseesun/anything-to-notebooklm.git
+    branch: main
+    single_skill: true         # repo itself is the skill (SKILL.md at root)
+    description: >
+      多源内容智能处理器：支持微信公众号、网页、YouTube、PDF、Markdown等，
+      自动上传到 NotebookLM 并生成播客/PPT/思维导图等多种格式
+
+local:
+  - huiwang-writing-style
