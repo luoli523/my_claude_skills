@@ -1,183 +1,153 @@
 # My Claude Skills
 
-个人收藏和使用的 Claude Skills 集合。
+个人收藏和管理的 Claude Skills 集合。通过 `skills.yaml` 清单统一跟踪多个 GitHub 仓库和本地 Skills，使用 `install.sh` 一键克隆仓库并创建符号链接到 `~/.claude/skills/`。
 
 ## Quick Start
 
 ```bash
-# Install all skills (clone repos + create symlinks)
+# 安装所有 skills（克隆仓库 + 创建符号链接）
 ./install.sh
 
-# Preview what would happen
+# 预览模式，不做实际修改
 ./install.sh --dry-run
 
-# List all managed skills
+# 列出所有已管理的 skills 及其状态
 ./install.sh --list
 
-# Remove stale symlinks
+# 清理失效的符号链接
 ./install.sh --cleanup
 ```
 
-**Prerequisites:** `python3` with `PyYAML` (auto-installed if missing)
+**前置依赖：** `python3` + `PyYAML`（脚本会自动安装）
 
-### How It Works
+## 工作原理
 
-1. `skills.yaml` defines skill sources: GitHub repos and local skills
-2. `install.sh` clones repos into `.repos/`, discovers skills (dirs containing `SKILL.md`), and creates symlinks in `~/.claude/skills/`
-3. Local skills (in this repo) take priority over repo skills with the same name
-4. Re-running is idempotent - only updates what changed
+1. `skills.yaml` 定义 skill 来源：GitHub 仓库和本地 skills
+2. `install.sh` 克隆仓库到 `.repos/`，扫描含 `SKILL.md` 的目录，在 `~/.claude/skills/` 创建符号链接
+3. 本地 skills 优先级高于同名的仓库 skills
+4. 重复运行是幂等的——只更新有变化的部分
 
-### Adding a New Repo
+## 添加新仓库
 
-Edit `skills.yaml`:
+编辑 `skills.yaml`：
+
 ```yaml
 repos:
-  my-new-source:
+  # 仓库内含多个 skill 子目录
+  my-skills-collection:
     url: https://github.com/user/repo.git
     branch: main
-    skills_path: "."     # where to scan for skill dirs
-    include:             # optional: whitelist specific skills
+    skills_path: "."         # 扫描路径，"." 表示根目录
+    include:                 # 可选：只安装指定 skills
       - skill-a
       - skill-b
+
+  # 仓库本身就是一个 skill
+  my-single-skill:
+    url: https://github.com/user/single-skill.git
+    branch: main
+    single_skill: true       # 根目录有 SKILL.md
 ```
 
-Then run `./install.sh`.
+然后运行 `./install.sh`。
 
 ---
 
-## Skills 资源备忘
+## 跟踪的 Skill 来源
 
-| 名称 | 地址 | 说明 |
-|------|------|------|
-| Awesome Claude Skills | https://github.com/ComposioHQ/awesome-claude-skills | 社区精选 Claude Skills 合集 |
-| Remotion Skills | https://github.com/remotion-dev/skills | Remotion 官方 Agent Skills |
-
-## 本仓库 Skills
-
-| 名称 | 说明 |
-|------|------|
-| [huiwang-writing-style](./huiwang-writing-style/) | 《回望灯火阑珊》写作风格指南，适用于青春文学、成长小说、考研/奋斗题材的温情现实主义风格写作 |
-| [remotion](./remotion/) | Remotion 视频创作最佳实践，使用 React 编程式生成视频 |
+| 仓库 | 地址 | Skills 数量 |
+|------|------|-------------|
+| awesome-claude-skills | https://github.com/ComposioHQ/awesome-claude-skills | ~29 |
+| baoyu-skills | https://github.com/JimLiu/baoyu-skills | 15 |
+| remotion-skills | https://github.com/remotion-dev/skills | 1 |
+| anything-to-notebooklm | https://github.com/joeseesun/anything-to-notebooklm | 1 |
+| **本仓库（local）** | — | 1 |
 
 ---
 
-## 所有 Skills 速查表
+## 本仓库 Skills（local）
 
-### 📄 文档处理 (Document Processing)
-
-| Skill | 简介 | 来源 |
-|-------|------|------|
-| [docx](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/docx) | 创建、编辑、分析 Word 文档，支持修订、批注、格式化 | awesome-claude-skills |
-| [pdf](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/pdf) | 提取文本、表格、元数据，合并和注释 PDF 文件 | awesome-claude-skills |
-| [pptx](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/pptx) | 读取、生成、调整幻灯片，支持布局和模板 | awesome-claude-skills |
-| [xlsx](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/xlsx) | 电子表格操作：公式、图表、数据转换 | awesome-claude-skills |
-| [Markdown to EPUB Converter](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/markdown-to-epub-converter) | 将 Markdown 文档转换为专业电子书文件 | awesome-claude-skills |
-
-### 💻 开发与代码工具 (Development & Code)
-
-| Skill | 简介 | 来源 |
-|-------|------|------|
-| [artifacts-builder](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/artifacts-builder) | 使用 React 和 Tailwind CSS 创建复杂多组件 HTML 工件 | awesome-claude-skills |
-| [aws-skills](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/aws-skills) | AWS 开发，CDK 最佳实践和无服务器架构模式 | awesome-claude-skills |
-| [Changelog Generator](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/changelog-generator) | 将技术性 git 提交转换为用户友好的发布说明 | awesome-claude-skills |
-| [Claude Code Terminal Title](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/claude-code-terminal-title) | 为终端窗口提供描述当前工作的动态标题 | awesome-claude-skills |
-| [D3.js Visualization](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/d3-visualization) | 教 Claude 生成 D3 图表和交互式数据可视化 | awesome-claude-skills |
-| [FFUF Web Fuzzing](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/ffuf-web-fuzzing) | 集成 Web 模糊测试工具进行漏洞分析 | awesome-claude-skills |
-| [iOS Simulator](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/ios-simulator) | 与 iOS 模拟器交互进行应用测试 | awesome-claude-skills |
-| [jules](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/jules) | 将编码任务委托给 Google Jules AI 代理处理 | awesome-claude-skills |
-| [LangSmith Fetch](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/langsmith-fetch) | 通过获取执行追踪调试 LangChain 代理 | awesome-claude-skills |
-| [MCP Builder](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/mcp-builder) | 指导创建 MCP 服务器以集成外部 API | awesome-claude-skills |
-| [move-code-quality-skill](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/move-code-quality-skill) | 分析 Move 语言包的代码质量合规性 | awesome-claude-skills |
-| [Playwright Browser Automation](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/webapp-testing) | 模型调用的浏览器测试和验证 | awesome-claude-skills |
-| [prompt-engineering](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/prompt-engineering) | 教授提示工程技术和 Anthropic 最佳实践 | awesome-claude-skills |
-| [pypict-claude-skill](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/pypict-claude-skill) | 使用成对测试方法设计全面的测试用例 | awesome-claude-skills |
-| [reddit-fetch](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/reddit-fetch) | 当 WebFetch 被阻止时获取 Reddit 内容 | awesome-claude-skills |
-| [Skill Creator](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/skill-creator) | 创建有效 Claude Skills 的指导 | awesome-claude-skills |
-| [Skill Seekers](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/skill-seekers) | 自动将文档网站转换为 Claude AI skills | awesome-claude-skills |
-| [software-architecture](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/software-architecture) | 实现设计模式，包括整洁架构和 SOLID 原则 | awesome-claude-skills |
-| [subagent-driven-development](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/subagent-driven-development) | 派遣独立子代理并进行代码审查检查点 | awesome-claude-skills |
-| [test-driven-development](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/test-driven-development) | 指导测试驱动开发方法论 | awesome-claude-skills |
-| [using-git-worktrees](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/using-git-worktrees) | 创建具有智能目录选择的独立 git worktrees | awesome-claude-skills |
-| [Connect](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/connect) | 使 Claude 能够发送邮件、创建 issue、发布 Slack 消息等 1000+ 服务 | awesome-claude-skills |
-| [Webapp Testing](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/webapp-testing) | 使用 Playwright 测试本地 Web 应用的 UI 功能 | awesome-claude-skills |
-
-### 📊 数据与分析 (Data & Analysis)
-
-| Skill | 简介 | 来源 |
-|-------|------|------|
-| [CSV Data Summarizer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/csv-data-summarizer) | 自动分析 CSV 文件并生成综合见解 | awesome-claude-skills |
-| [deep-research](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/deep-research) | 使用 Gemini Deep Research Agent 执行自主多步骤研究 | awesome-claude-skills |
-| [postgres](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/postgres) | 对 PostgreSQL 数据库执行安全的只读 SQL 查询 | awesome-claude-skills |
-| [root-cause-tracing](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/root-cause-tracing) | 追溯错误以在深度执行中找到原始触发器 | awesome-claude-skills |
-
-### 💼 商业与营销 (Business & Marketing)
-
-| Skill | 简介 | 来源 |
-|-------|------|------|
-| [Brand Guidelines](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/brand-guidelines) | 将 Anthropic 官方品牌颜色和排版应用于工件 | awesome-claude-skills |
-| [Competitive Ads Extractor](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/competitive-ads-extractor) | 从广告库中提取和分析竞争对手的广告 | awesome-claude-skills |
-| [Domain Name Brainstormer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/domain-name-brainstormer) | 生成创意域名并检查可用性 | awesome-claude-skills |
-| [Internal Comms](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/internal-comms) | 使用公司特定格式帮助撰写内部沟通 | awesome-claude-skills |
-| [Lead Research Assistant](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/lead-research-assistant) | 识别和筛选潜在客户，提供可操作的外联策略 | awesome-claude-skills |
-
-### ✍️ 沟通与写作 (Communication & Writing)
-
-| Skill | 简介 | 来源 |
-|-------|------|------|
-| [article-extractor](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/article-extractor) | 从网页中提取完整文章文本和元数据 | awesome-claude-skills |
-| [brainstorming](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/brainstorming) | 通过结构化提问将粗略想法转化为完整设计 | awesome-claude-skills |
-| [Content Research Writer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/content-research-writer) | 进行研究、添加引用、改进开头 | awesome-claude-skills |
-| [family-history-research](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/family-history-research) | 协助家谱和家族历史研究规划 | awesome-claude-skills |
-| [Meeting Insights Analyzer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/meeting-insights-analyzer) | 分析会议记录以发现行为模式和沟通洞察 | awesome-claude-skills |
-| [NotebookLM Integration](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/notebooklm) | 与 NotebookLM 聊天获取基于文档的回答 | awesome-claude-skills |
-| [Twitter Algorithm Optimizer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/twitter-algorithm-optimizer) | 分析和优化推文以最大化覆盖和互动 | awesome-claude-skills |
-| **[huiwang-writing-style](https://github.com/luoli523/my_claude_skills/tree/main/huiwang-writing-style)** | 《回望灯火阑珊》写作风格指南，温情现实主义青春文学创作 | **本仓库** |
-
-### 🎨 创意与媒体 (Creative & Media)
-
-| Skill | 简介 | 来源 |
-|-------|------|------|
-| [Canvas Design](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/canvas-design) | 使用设计哲学原则创建 PNG 和 PDF 视觉艺术 | awesome-claude-skills |
-| [imagen](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/imagen) | 使用 Google Gemini API 生成 UI 模型和插图图像 | awesome-claude-skills |
-| [Image Enhancer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/image-enhancer) | 通过增强分辨率和清晰度提升图像质量 | awesome-claude-skills |
-| **[remotion](https://github.com/luoli523/my_claude_skills/tree/main/remotion)** | 使用 React 编程式创建视频，含 30+ 最佳实践规则 | **本仓库** |
-| [Slack GIF Creator](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/slack-gif-creator) | 创建针对 Slack 优化的动画 GIF | awesome-claude-skills |
-| [Theme Factory](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/theme-factory) | 为工件应用专业字体和颜色主题，含 10 个预设选项 | awesome-claude-skills |
-| [Video Downloader](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/video-downloader) | 从 YouTube 等平台下载视频供离线使用 | awesome-claude-skills |
-| [youtube-transcript](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/youtube-transcript) | 获取 YouTube 视频字幕并准备摘要 | awesome-claude-skills |
-
-### 📁 效率与组织 (Productivity & Organization)
-
-| Skill | 简介 | 来源 |
-|-------|------|------|
-| [File Organizer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/file-organizer) | 通过理解上下文和查找重复项智能组织文件 | awesome-claude-skills |
-| [Invoice Organizer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/invoice-organizer) | 自动组织发票进行税务准备，统一命名 | awesome-claude-skills |
-| [kaizen](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/kaizen) | 应用基于 Kaizen 哲学的持续改进方法论 | awesome-claude-skills |
-| [n8n-skills](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/n8n-skills) | 使 AI 助手能够理解和操作 n8n 工作流 | awesome-claude-skills |
-| [Raffle Winner Picker](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/raffle-winner-picker) | 使用加密安全随机性从列表中随机选择获奖者 | awesome-claude-skills |
-| [Tailored Resume Generator](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/tailored-resume-generator) | 分析职位描述并生成定制简历 | awesome-claude-skills |
-| [ship-learn-next](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/ship-learn-next) | 根据反馈帮助迭代下一步要构建或学习的内容 | awesome-claude-skills |
-| [tapestry](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/tapestry) | 将相关文档互连并汇总为知识网络 | awesome-claude-skills |
-
-### 🤝 协作与项目管理 (Collaboration & Project)
-
-| Skill | 简介 | 来源 |
-|-------|------|------|
-| [git-pushing](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/git-pushing) | 自动化 git 操作和仓库交互 | awesome-claude-skills |
-| [google-workspace-skills](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/google-workspace-skills) | 集成 Gmail、日历、Chat、Docs、Sheets、Slides、Drive 的套件 | awesome-claude-skills |
-| [outline](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/outline) | 在 Outline wiki 实例中搜索、读取、创建和管理文档 | awesome-claude-skills |
-| [review-implementing](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/review-implementing) | 评估代码实现计划与规范的一致性 | awesome-claude-skills |
-| [test-fixing](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/test-fixing) | 检测失败的测试并提出补丁或修复 | awesome-claude-skills |
-
-### 🔒 安全与系统 (Security & Systems)
-
-| Skill | 简介 | 来源 |
-|-------|------|------|
-| [computer-forensics](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/computer-forensics) | 数字取证分析和调查技术 | awesome-claude-skills |
-| [file-deletion](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/file-deletion) | 安全文件删除和数据清理方法 | awesome-claude-skills |
-| [metadata-extraction](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/metadata-extraction) | 提取和分析文件元数据用于取证目的 | awesome-claude-skills |
-| [threat-hunting-with-sigma-rules](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/threat-hunting-with-sigma-rules) | 使用 Sigma 检测规则进行威胁狩猎和安全事件分析 | awesome-claude-skills |
+| Skill | 说明 |
+|-------|------|
+| [huiwang-writing-style](./huiwang-writing-style/) | 《回望灯火阑珊》写作风格指南，温情现实主义青春文学创作，适用于成长小说、考研/奋斗题材 |
 
 ---
 
-*最后更新: 2026-01-26*
+## awesome-claude-skills
+
+来源：[ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)（社区精选 Claude Skills 合集）
+
+| Skill | 说明 |
+|-------|------|
+| [artifacts-builder](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/artifacts-builder) | 使用 React、Tailwind CSS、shadcn/ui 构建复杂的多组件 HTML Artifact |
+| [brand-guidelines](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/brand-guidelines) | 将 Anthropic 官方品牌配色和排版风格应用到 Artifact |
+| [canvas-design](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/canvas-design) | 基于设计哲学创作 PNG/PDF 视觉艺术作品（海报、设计图等） |
+| [changelog-generator](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/changelog-generator) | 从 Git 提交历史自动生成面向用户的更新日志 |
+| [competitive-ads-extractor](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/competitive-ads-extractor) | 从广告库（Facebook、LinkedIn 等）提取并分析竞品广告策略 |
+| [connect](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/connect) | 连接 Gmail、Slack、GitHub、Notion 等 1000+ 应用，执行实际操作 |
+| [connect-apps](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/connect-apps) | 连接外部应用（Gmail、Slack、GitHub），执行发邮件、建 Issue 等操作 |
+| [content-research-writer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/content-research-writer) | 辅助高质量内容写作：调研、引用、优化开头、迭代大纲 |
+| [developer-growth-analysis](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/developer-growth-analysis) | 分析 Claude Code 聊天历史，识别编码模式和成长空间，推送学习报告 |
+| [domain-name-brainstormer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/domain-name-brainstormer) | 生成创意域名并检查 .com/.io/.dev/.ai 等可用性 |
+| [file-organizer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/file-organizer) | 智能整理文件和文件夹：理解上下文、查找重复、建议更优结构 |
+| [image-enhancer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/image-enhancer) | 提升图片（尤其截图）的分辨率、清晰度和锐度 |
+| [internal-comms](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/internal-comms) | 撰写各类内部沟通文档（状态报告、通讯、FAQ、事故报告等） |
+| [invoice-organizer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/invoice-organizer) | 自动整理发票和收据：提取信息、统一命名、分类归档 |
+| [langsmith-fetch](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/langsmith-fetch) | 从 LangSmith Studio 获取执行追踪，调试 LangChain/LangGraph Agent |
+| [lead-research-assistant](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/lead-research-assistant) | 搜索目标公司，提供高质量潜在客户线索和外联策略 |
+| [mcp-builder](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/mcp-builder) | 创建 MCP（模型上下文协议）服务器的指南，支持 Python 和 TypeScript |
+| [meeting-insights-analyzer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/meeting-insights-analyzer) | 分析会议记录，发现沟通模式和行为洞察，提供改进建议 |
+| [raffle-winner-picker](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/raffle-winner-picker) | 从列表或 Google Sheets 中随机抽取获奖者，确保公平透明 |
+| [skill-creator](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/skill-creator) | 创建或更新 Claude Skill 的指南 |
+| [skill-share](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/skill-share) | 创建 Claude Skill 并通过 Slack 自动分享给团队 |
+| [slack-gif-creator](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/slack-gif-creator) | 创建适配 Slack 尺寸约束的动画 GIF |
+| [tailored-resume-generator](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/tailored-resume-generator) | 分析职位描述并生成定制简历，突出相关经验和技能 |
+| [template-skill](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/template-skill) | Skill 模板/占位符，用于创建新 Skill 的起点 |
+| [theme-factory](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/theme-factory) | 为 Artifact 应用主题样式的工具包，含 10 套预设主题 |
+| [twitter-algorithm-optimizer](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/twitter-algorithm-optimizer) | 基于 Twitter 开源算法分析并优化推文，提升曝光和互动 |
+| [video-downloader](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/video-downloader) | 下载 YouTube 视频，支持自定义画质、格式和纯音频 MP3 |
+| [webapp-testing](https://github.com/ComposioHQ/awesome-claude-skills/tree/master/webapp-testing) | 使用 Playwright 测试本地 Web 应用的 UI 功能 |
+
+---
+
+## baoyu-skills
+
+来源：[JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills)（暴雨系列 Skills 合集）
+
+| Skill | 说明 |
+|-------|------|
+| [baoyu-article-illustrator](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-article-illustrator) | 分析文章结构，定位需要配图的位置，以「类型 x 风格」二维方式生成插图 |
+| [baoyu-comic](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-comic) | 知识漫画创作器，支持多种画风和语调，生成原创教育漫画 |
+| [baoyu-compress-image](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-compress-image) | 将图片压缩为 WebP（默认）或 PNG 格式，自动选择最佳压缩工具 |
+| [baoyu-cover-image](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-cover-image) | 以五维参数（类型、色板、渲染、文字、氛围）生成文章封面图 |
+| [baoyu-danger-gemini-web](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-danger-gemini-web) | 通过逆向工程的 Gemini Web API 生成图片和文本，支持多轮对话 |
+| [baoyu-danger-x-to-markdown](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-danger-x-to-markdown) | 将 X（Twitter）推文和文章转换为带 YAML 前言的 Markdown |
+| [baoyu-format-markdown](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-format-markdown) | 格式化纯文本或 Markdown：添加前言、标题、摘要、加粗、列表等 |
+| [baoyu-image-gen](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-image-gen) | 基于 OpenAI/Google/DashScope API 的 AI 图片生成，支持文生图和参考图 |
+| [baoyu-infographic](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-infographic) | 生成专业信息图，20 种布局和 17 种视觉风格自由组合 |
+| [baoyu-markdown-to-html](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-markdown-to-html) | Markdown 转带样式 HTML，兼容微信公众号，支持代码高亮和数学公式 |
+| [baoyu-post-to-wechat](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-post-to-wechat) | 通过 API 或 Chrome CDP 发布内容到微信公众号，支持文章和图文消息 |
+| [baoyu-post-to-x](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-post-to-x) | 通过真实 Chrome 浏览器发布推文、图片、视频和长文到 X（Twitter） |
+| [baoyu-slide-deck](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-slide-deck) | 从内容生成专业演示文稿幻灯片图片 |
+| [baoyu-url-to-markdown](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-url-to-markdown) | 通过 Chrome CDP 抓取任意网页并转换为 Markdown |
+| [baoyu-xhs-images](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-xhs-images) | 生成小红书风格信息图系列，10 种视觉风格和 8 种布局 |
+
+---
+
+## remotion-skills
+
+来源：[remotion-dev/skills](https://github.com/remotion-dev/skills)（Remotion 官方 Skills）
+
+| Skill | 说明 |
+|-------|------|
+| [remotion](https://github.com/remotion-dev/skills/tree/main/skills/remotion) | Remotion 视频创作框架最佳实践，使用 React 编程式生成视频，含 30+ 规则指南 |
+
+---
+
+## anything-to-notebooklm
+
+来源：[joeseesun/anything-to-notebooklm](https://github.com/joeseesun/anything-to-notebooklm)
+
+| Skill | 说明 |
+|-------|------|
+| [anything-to-notebooklm](https://github.com/joeseesun/anything-to-notebooklm) | 多源内容智能处理器：支持微信公众号、网页、YouTube、PDF、Markdown 等，自动上传到 NotebookLM 并生成播客/PPT/思维导图等多种格式 |
