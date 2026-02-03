@@ -24,8 +24,9 @@
 
 1. `skills.yaml` 定义 skill 来源：GitHub 仓库和本地 skills
 2. `install.sh` 克隆仓库到 `.repos/`，扫描含 `SKILL.md` 的目录，在 `~/.claude/skills/` 创建符号链接
-3. 本地 skills 优先级高于同名的仓库 skills
-4. 重复运行是幂等的——只更新有变化的部分
+3. 重复运行时自动检查远程仓库更新——比较本地与远程 commit hash，有更新才拉取，并显示变更的 commit 摘要（如 `Updated repo (abc1234 -> def5678)`）；已是最新则显示 `Up-to-date`
+4. 符号链接指向 `.repos/` 中的目录，仓库更新后 symlink 自动指向最新内容，无需重建链接
+5. 本地 skills 优先级高于同名的仓库 skills
 
 ## 添加新仓库
 

@@ -167,10 +167,18 @@ for entry in $REPO_ENTRIES; do
     repo_dir="$CLONE_DIR_ABS/$repo_name"
 
     if [[ -d "$repo_dir/.git" ]]; then
-        echo -e "  ${GREEN}Updating${NC} $repo_name..."
         if ! $DRY_RUN; then
+            local_sha="$(git -C "$repo_dir" rev-parse HEAD)"
             git -C "$repo_dir" fetch origin "$branch" --quiet
-            git -C "$repo_dir" reset --hard "origin/$branch" --quiet
+            remote_sha="$(git -C "$repo_dir" rev-parse "origin/$branch")"
+            if [[ "$local_sha" != "$remote_sha" ]]; then
+                echo -e "  ${GREEN}Updated${NC} $repo_name (${local_sha:0:7} -> ${remote_sha:0:7})"
+                git -C "$repo_dir" reset --hard "origin/$branch" --quiet
+            else
+                echo -e "  ${BLUE}Up-to-date${NC} $repo_name (${local_sha:0:7})"
+            fi
+        else
+            echo -e "  ${GREEN}Would update${NC} $repo_name"
         fi
     else
         echo -e "  ${GREEN}Cloning${NC} $repo_name..."
