@@ -62,7 +62,7 @@ repos:
 | baoyu-skills | https://github.com/JimLiu/baoyu-skills | 15 |
 | remotion-skills | https://github.com/remotion-dev/skills | 1 |
 | anything-to-notebooklm | https://github.com/joeseesun/anything-to-notebooklm | 1 |
-| **本仓库（local）** | — | 1 |
+| **本仓库（local）** | — | 2 |
 
 ---
 
@@ -70,6 +70,7 @@ repos:
 
 | Skill | 说明 |
 |-------|------|
+| [guige-blog-post](./guige-blog-post/) | 鬼哥博客文章全流程工作流：调研 → 撰写 → 配图 → 转 WebP → 提交推送 → 发微信公众号，触发命令 `/blog-post` |
 | [huiwang-writing-style](./huiwang-writing-style/) | 《回望灯火阑珊》写作风格指南，温情现实主义青春文学创作，适用于成长小说、考研/奋斗题材 |
 
 ---
