@@ -24,6 +24,19 @@ repos:
       信息图、幻灯片、文章配图、图片压缩、网页转 Markdown、
       发布微信公众号/X(Twitter) 等 15 个 skills
 
+  agent-skills:
+    url: https://github.com/addyosmani/agent-skills.git
+    branch: main
+    skills_path: "skills"      # 20 个开发流程 skills (planning, TDD, code review, security 等)
+    description: >
+      Addy Osmani 的 Agent Skills 合集，覆盖开发全生命周期：
+      规划、实现、测试、代码审查、性能优化、安全加固、发布等 20 个 skills
+
+  logo-generator-skill:
+    url: https://github.com/op7418/logo-generator-skill.git
+    branch: main
+    single_skill: true         # SKILL.md 在 repo 根目录
+
   anything-to-notebooklm:
     url: https://github.com/joeseesun/anything-to-notebooklm.git
     branch: main

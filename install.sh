@@ -57,11 +57,14 @@ fi
 # --- Ensure PyYAML ---
 ensure_pyyaml() {
     python3 -c "import yaml" 2>/dev/null && return 0
-    echo -e "${YELLOW}Installing PyYAML...${NC}"
-    pip3 install --user pyyaml >/dev/null 2>&1 || {
-        echo -e "${RED}Error: Failed to install PyYAML. Install it manually: pip3 install pyyaml${NC}"
-        exit 1
-    }
+    echo -e "${YELLOW}PyYAML not found, attempting to install...${NC}"
+    # Try matching pip to the active python3
+    python3 -m pip install --user --break-system-packages pyyaml 2>/dev/null && return 0
+    python3 -m pip install --user pyyaml 2>/dev/null && return 0
+    pip3 install --user pyyaml 2>/dev/null && return 0
+    echo -e "${RED}Error: Failed to install PyYAML. Install it manually:${NC}"
+    echo -e "${RED}  python3 -m pip install --break-system-packages pyyaml${NC}"
+    exit 1
 }
 
 ensure_pyyaml
