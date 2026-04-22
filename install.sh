@@ -217,6 +217,7 @@ conflicts = {}       # skill_name -> description
 
 for repo_name, rcfg in cfg.get('repos', {}).items():
     single_skill = rcfg.get('single_skill', False)
+    prefix = rcfg.get('prefix', '')
     repo_dir = os.path.join(clone_dir, repo_name)
 
     if not os.path.isdir(repo_dir):
@@ -227,11 +228,12 @@ for repo_name, rcfg in cfg.get('repos', {}).items():
     if single_skill:
         # Repo itself is the skill
         if os.path.isfile(os.path.join(repo_dir, 'SKILL.md')):
-            if repo_name in skill_sources:
-                conflicts[repo_name] = f"{skill_repos[repo_name]} + {repo_name}"
+            skill_name = prefix + repo_name
+            if skill_name in skill_sources:
+                conflicts[skill_name] = f"{skill_repos[skill_name]} + {repo_name}"
             else:
-                skill_sources[repo_name] = repo_dir
-                skill_repos[repo_name] = repo_name
+                skill_sources[skill_name] = repo_dir
+                skill_repos[skill_name] = repo_name
         continue
 
     skills_path = rcfg.get('skills_path', '.')
@@ -252,11 +254,12 @@ for repo_name, rcfg in cfg.get('repos', {}).items():
         if include and entry not in include:
             continue
 
-        if entry in skill_sources:
-            conflicts[entry] = f"{skill_repos[entry]} + {repo_name}"
+        skill_name = prefix + entry
+        if skill_name in skill_sources:
+            conflicts[skill_name] = f"{skill_repos[skill_name]} + {repo_name}"
         else:
-            skill_sources[entry] = skill_dir
-            skill_repos[entry] = repo_name
+            skill_sources[skill_name] = skill_dir
+            skill_repos[skill_name] = repo_name
 
 # Discover local skills (override repo skills)
 for skill in cfg.get('local', []):
