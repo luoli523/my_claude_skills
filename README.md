@@ -48,6 +48,13 @@ repos:
     url: https://github.com/user/single-skill.git
     branch: main
     single_skill: true       # 根目录有 SKILL.md
+
+  # 给整个仓库的 skills 统一加前缀（便于辨识来自同一 set）
+  some-skills:
+    url: https://github.com/user/some-skills.git
+    branch: main
+    skills_path: "skills"
+    prefix: "some-"          # 符号链接会命名为 some-<skill>
 ```
 
 然后运行 `./install.sh`。
@@ -59,10 +66,12 @@ repos:
 | 仓库 | 地址 | Skills 数量 |
 |------|------|-------------|
 | awesome-claude-skills | https://github.com/ComposioHQ/awesome-claude-skills | ~29 |
-| baoyu-skills | https://github.com/JimLiu/baoyu-skills | 15 |
+| baoyu-skills | https://github.com/JimLiu/baoyu-skills | 21 |
+| agent-skills（`agent-` 前缀） | https://github.com/addyosmani/agent-skills | 21 |
 | remotion-skills | https://github.com/remotion-dev/skills | 1 |
+| logo-generator-skill | https://github.com/op7418/logo-generator-skill | 1 |
 | anything-to-notebooklm | https://github.com/joeseesun/anything-to-notebooklm | 1 |
-| **本仓库（local）** | — | 2 |
+| **本仓库（local）** | — | 3 |
 
 ---
 
@@ -71,6 +80,7 @@ repos:
 | Skill | 说明 |
 |-------|------|
 | [guige-blog-post](./guige-blog-post/) | 鬼哥博客文章全流程工作流：调研 → 撰写 → 配图 → 转 WebP → 提交推送 → 发微信公众号，触发命令 `/blog-post` |
+| [guige-x-to-blog](./guige-x-to-blog/) | 一键将 X 推文转为中文博客文章并发布到 luoli523.github.io |
 | [huiwang-writing-style](./huiwang-writing-style/) | 《回望灯火阑珊》写作风格指南，温情现实主义青春文学创作，适用于成长小说、考研/奋斗题材 |
 
 ---
@@ -124,15 +134,21 @@ repos:
 | [baoyu-cover-image](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-cover-image) | 以五维参数（类型、色板、渲染、文字、氛围）生成文章封面图 |
 | [baoyu-danger-gemini-web](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-danger-gemini-web) | 通过逆向工程的 Gemini Web API 生成图片和文本，支持多轮对话 |
 | [baoyu-danger-x-to-markdown](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-danger-x-to-markdown) | 将 X（Twitter）推文和文章转换为带 YAML 前言的 Markdown |
+| [baoyu-diagram](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-diagram) | 生成各类专业深色主题 SVG 图表：架构图、流程图、时序图、思维导图、时间线等 |
 | [baoyu-format-markdown](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-format-markdown) | 格式化纯文本或 Markdown：添加前言、标题、摘要、加粗、列表等 |
+| [baoyu-image-cards](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-image-cards) | 生成小红书/微信图文配图卡片系列，12 种视觉风格 × 8 种布局 × 3 套配色 |
 | [baoyu-image-gen](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-image-gen) | 基于 OpenAI/Google/DashScope API 的 AI 图片生成，支持文生图和参考图 |
+| [baoyu-imagine](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-imagine) | 多家 API（OpenAI/Google/Replicate/Jimeng 等）图片生成，支持批量并行 |
 | [baoyu-infographic](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-infographic) | 生成专业信息图，20 种布局和 17 种视觉风格自由组合 |
 | [baoyu-markdown-to-html](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-markdown-to-html) | Markdown 转带样式 HTML，兼容微信公众号，支持代码高亮和数学公式 |
 | [baoyu-post-to-wechat](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-post-to-wechat) | 通过 API 或 Chrome CDP 发布内容到微信公众号，支持文章和图文消息 |
+| [baoyu-post-to-weibo](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-post-to-weibo) | 通过 Chrome CDP 发布微博普通动态和头条文章，支持图片/视频/Markdown |
 | [baoyu-post-to-x](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-post-to-x) | 通过真实 Chrome 浏览器发布推文、图片、视频和长文到 X（Twitter） |
 | [baoyu-slide-deck](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-slide-deck) | 从内容生成专业演示文稿幻灯片图片 |
+| [baoyu-translate](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-translate) | 三档翻译模式（快速/常规/精翻），支持术语表和本地化，中英互译 |
 | [baoyu-url-to-markdown](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-url-to-markdown) | 通过 Chrome CDP 抓取任意网页并转换为 Markdown |
 | [baoyu-xhs-images](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-xhs-images) | 生成小红书风格信息图系列，10 种视觉风格和 8 种布局 |
+| [baoyu-youtube-transcript](https://github.com/JimLiu/baoyu-skills/tree/main/skills/baoyu-youtube-transcript) | 下载 YouTube 视频字幕/封面，支持多语言、翻译、分章节、说话人识别 |
 
 ---
 
@@ -143,6 +159,67 @@ repos:
 | Skill | 说明 |
 |-------|------|
 | [remotion](https://github.com/remotion-dev/skills/tree/main/skills/remotion) | Remotion 视频创作框架最佳实践，使用 React 编程式生成视频，含 30+ 规则指南 |
+
+---
+
+## agent-skills（带 `agent-` 前缀）
+
+来源：[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)（覆盖开发全生命周期的 21 个 skills，统一加 `agent-` 前缀便于辨识）
+
+### 规划与设计
+| Skill | 说明 |
+|-------|------|
+| [agent-idea-refine](https://github.com/addyosmani/agent-skills/tree/main/skills/idea-refine) | 通过结构化的发散-收敛思维迭代精炼想法 |
+| [agent-spec-driven-development](https://github.com/addyosmani/agent-skills/tree/main/skills/spec-driven-development) | 编码前先写规格说明；适用于新项目/新特性或需求不清晰时 |
+| [agent-planning-and-task-breakdown](https://github.com/addyosmani/agent-skills/tree/main/skills/planning-and-task-breakdown) | 将工作拆分为可实现的有序任务 |
+| [agent-api-and-interface-design](https://github.com/addyosmani/agent-skills/tree/main/skills/api-and-interface-design) | 设计稳定的 API 与模块边界（REST、GraphQL、类型契约） |
+| [agent-context-engineering](https://github.com/addyosmani/agent-skills/tree/main/skills/context-engineering) | 优化 Agent 上下文设置：开始新会话、配置规则文件、切换任务 |
+
+### 开发与实现
+| Skill | 说明 |
+|-------|------|
+| [agent-test-driven-development](https://github.com/addyosmani/agent-skills/tree/main/skills/test-driven-development) | 测试驱动开发：实现逻辑、修 bug、改行为前先写测试 |
+| [agent-incremental-implementation](https://github.com/addyosmani/agent-skills/tree/main/skills/incremental-implementation) | 增量式交付改动，避免一次性写太多代码 |
+| [agent-source-driven-development](https://github.com/addyosmani/agent-skills/tree/main/skills/source-driven-development) | 基于官方文档实现，避免过时模式，每个决策都有来源引用 |
+| [agent-frontend-ui-engineering](https://github.com/addyosmani/agent-skills/tree/main/skills/frontend-ui-engineering) | 构建生产级 UI：组件、布局、状态管理、避免 AI 风格化输出 |
+| [agent-code-simplification](https://github.com/addyosmani/agent-skills/tree/main/skills/code-simplification) | 在不改变行为的前提下重构代码，提升可读性和可维护性 |
+
+### 测试与调试
+| Skill | 说明 |
+|-------|------|
+| [agent-browser-testing-with-devtools](https://github.com/addyosmani/agent-skills/tree/main/skills/browser-testing-with-devtools) | 通过 Chrome DevTools MCP 在真实浏览器里做测试（DOM、控制台、网络、性能） |
+| [agent-debugging-and-error-recovery](https://github.com/addyosmani/agent-skills/tree/main/skills/debugging-and-error-recovery) | 系统化的根因调试方法（测试失败、构建损坏、行为异常） |
+
+### 审查与质量
+| Skill | 说明 |
+|-------|------|
+| [agent-code-review-and-quality](https://github.com/addyosmani/agent-skills/tree/main/skills/code-review-and-quality) | 多维度代码审查，合并前的质量门禁 |
+| [agent-security-and-hardening](https://github.com/addyosmani/agent-skills/tree/main/skills/security-and-hardening) | 针对输入处理、认证、存储和第三方集成的安全加固 |
+| [agent-performance-optimization](https://github.com/addyosmani/agent-skills/tree/main/skills/performance-optimization) | 应用性能优化：定位瓶颈、改善 Core Web Vitals、降低加载时间 |
+
+### 发布与运维
+| Skill | 说明 |
+|-------|------|
+| [agent-ci-cd-and-automation](https://github.com/addyosmani/agent-skills/tree/main/skills/ci-cd-and-automation) | CI/CD 流水线搭建与自动化质量门禁 |
+| [agent-git-workflow-and-versioning](https://github.com/addyosmani/agent-skills/tree/main/skills/git-workflow-and-versioning) | 规范 Git 工作流：提交、分支、冲突解决、多流并行 |
+| [agent-shipping-and-launch](https://github.com/addyosmani/agent-skills/tree/main/skills/shipping-and-launch) | 生产发布准备：预发清单、监控、灰度、回滚策略 |
+| [agent-deprecation-and-migration](https://github.com/addyosmani/agent-skills/tree/main/skills/deprecation-and-migration) | 系统/API/特性下线与用户迁移管理 |
+
+### 文档与元
+| Skill | 说明 |
+|-------|------|
+| [agent-documentation-and-adrs](https://github.com/addyosmani/agent-skills/tree/main/skills/documentation-and-adrs) | 架构决策记录（ADR）与文档沉淀 |
+| [agent-using-agent-skills](https://github.com/addyosmani/agent-skills/tree/main/skills/using-agent-skills) | 元 skill：发现并调用其他 agent skills |
+
+---
+
+## logo-generator-skill
+
+来源：[op7418/logo-generator-skill](https://github.com/op7418/logo-generator-skill)
+
+| Skill | 说明 |
+|-------|------|
+| [logo-generator-skill](https://github.com/op7418/logo-generator-skill) | 生成专业 SVG Logo 和高端展示图，支持几何、点阵、线条等风格，含 12 种展示背景 |
 
 ---
 
