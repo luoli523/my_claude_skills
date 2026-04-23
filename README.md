@@ -1,6 +1,6 @@
 # My Claude Skills
 
-个人收藏和管理的 Claude Skills 集合。通过 `skills.yaml` 清单统一跟踪多个 GitHub 仓库和本地 Skills，使用 `install.sh` 一键克隆仓库并创建符号链接到 `~/.claude/skills/`。
+个人收藏和管理的 AI 编程助手 Skills 集合。通过 `skills.yaml` 清单统一跟踪多个 GitHub 仓库和本地 Skills，使用 `install.sh` 一键克隆仓库并**同时**为 Claude Code（`~/.claude/skills/`）和 Codex（`~/.codex/skills/`）创建符号链接，一份源文件、两处可用。
 
 ## Quick Start
 
@@ -22,11 +22,24 @@
 
 ## 工作原理
 
-1. `skills.yaml` 定义 skill 来源：GitHub 仓库和本地 skills
-2. `install.sh` 克隆仓库到 `.repos/`，扫描含 `SKILL.md` 的目录，在 `~/.claude/skills/` 创建符号链接
+1. `skills.yaml` 定义 skill 来源（GitHub 仓库、本地 skills）和目标目录列表 `skills_dir`
+2. `install.sh` 克隆仓库到 `.repos/`，扫描含 `SKILL.md` 的目录，在 `skills_dir` 列表的**每一个**目录里都创建符号链接（默认 Claude Code + Codex 两处）
 3. 重复运行时自动检查远程仓库更新——比较本地与远程 commit hash，有更新才拉取，并显示变更的 commit 摘要（如 `Updated repo (abc1234 -> def5678)`）；已是最新则显示 `Up-to-date`
 4. 符号链接指向 `.repos/` 中的目录，仓库更新后 symlink 自动指向最新内容，无需重建链接
 5. 本地 skills 优先级高于同名的仓库 skills
+6. `--cleanup` 只删除"指向本项目 `.repos/` 或项目根目录"的失效 symlink，不会误伤 Codex 自带的 `.system/` 目录或你手动放的其他内容
+
+### 多目标目录（Claude Code + Codex）
+
+`skills_dir` 支持单个字符串或数组，默认配置：
+
+```yaml
+skills_dir:
+  - ~/.claude/skills     # Claude Code
+  - ~/.codex/skills      # Codex
+```
+
+Codex 和 Claude Code 的 skill 目录格式兼容（同样是含 `SKILL.md` 的目录、同样的 frontmatter），因此一份源文件在两边都能被识别。Codex 自带的系统 skills（`~/.codex/skills/.system/`）不受影响。
 
 ## 添加新仓库
 
@@ -58,6 +71,16 @@ repos:
 ```
 
 然后运行 `./install.sh`。
+
+## 只安装到单个目标目录
+
+如果只用 Claude Code（或只用 Codex），把 `skills_dir` 改成单个路径即可：
+
+```yaml
+skills_dir: ~/.claude/skills
+```
+
+或者只保留数组里你需要的那一项。
 
 ---
 
