@@ -69,18 +69,15 @@ ensure_pyyaml() {
 
 ensure_pyyaml
 
-# --- Parse config for bash (repos + local lists only) ---
+# --- Parse config for bash (repos list + clone_dir only) ---
 eval "$(python3 -c "
-import yaml, os
+import yaml
 
 with open('$CONFIG_FILE') as f:
     cfg = yaml.safe_load(f)
 
 clone_dir = cfg.get('clone_dir', '.repos')
-skills_dir = os.path.expanduser(cfg.get('skills_dir', '~/.claude/skills'))
-
 print(f'CLONE_DIR=\"{clone_dir}\"')
-print(f'SKILLS_DIR=\"{skills_dir}\"')
 
 repos = cfg.get('repos', {})
 repo_lines = []
@@ -95,27 +92,45 @@ CLONE_DIR_ABS="$SCRIPT_DIR/$CLONE_DIR"
 
 # --- Phase: --list ---
 if $LIST; then
-    python3 - "$CONFIG_FILE" "$SCRIPT_DIR" "$CLONE_DIR_ABS" "$SKILLS_DIR" <<'PYEOF'
+    python3 - "$CONFIG_FILE" "$SCRIPT_DIR" "$CLONE_DIR_ABS" <<'PYEOF'
 import yaml, os, sys
 
-config_file, script_dir, clone_dir, skills_dir = sys.argv[1:5]
+config_file, script_dir, clone_dir = sys.argv[1:4]
 
 with open(config_file) as f:
     cfg = yaml.safe_load(f)
 
-BLUE, GREEN, NC = '\033[0;34m', '\033[0;32m', '\033[0m'
-print(f"{BLUE}=== Managed Skills ==={NC}\n")
+raw = cfg.get('skills_dir', '~/.claude/skills')
+if isinstance(raw, str):
+    raw = [raw]
+skills_dirs = [os.path.expanduser(p) for p in raw]
+
+BLUE, GREEN, YELLOW, NC = '\033[0;34m', '\033[0;32m', '\033[1;33m', '\033[0m'
+print(f"{BLUE}=== Managed Skills ==={NC}")
+print(f"Target skills dirs: {', '.join(skills_dirs)}\n")
+
+def status(skill_name, source_dir=None):
+    """Return a compact per-dir link status string."""
+    parts = []
+    for d in skills_dirs:
+        label = os.path.basename(os.path.dirname(d)) or d  # e.g. ".claude"
+        link = os.path.join(d, skill_name)
+        if os.path.islink(link):
+            tgt = os.readlink(link)
+            ok = (source_dir is None or tgt == source_dir)
+            parts.append(f"{label}:{'ok' if ok else 'stale'}")
+        else:
+            parts.append(f"{label}:-")
+    return " ".join(parts)
 
 # Local skills
 local_skills = cfg.get('local', [])
 if local_skills:
     print(f"{GREEN}Local skills:{NC}")
     for skill in local_skills:
-        link = os.path.join(skills_dir, skill)
-        if os.path.islink(link):
-            print(f"  {skill} -> {os.readlink(link)}")
-        elif os.path.isdir(os.path.join(script_dir, skill)):
-            print(f"  {skill} (not linked)")
+        source_dir = os.path.join(script_dir, skill)
+        if os.path.isdir(source_dir):
+            print(f"  {skill} [{status(skill, source_dir)}] -> {source_dir}")
         else:
             print(f"  {skill} (missing)")
     print()
@@ -124,33 +139,25 @@ if local_skills:
 for repo_name, rcfg in cfg.get('repos', {}).items():
     print(f"{GREEN}Repo: {repo_name}{NC}")
     single_skill = rcfg.get('single_skill', False)
+    prefix = rcfg.get('prefix', '')
     repo_dir = os.path.join(clone_dir, repo_name)
 
     if not os.path.isdir(repo_dir):
         print("  (not cloned yet - run install first)")
     elif single_skill:
-        # Repo itself is the skill
-        link = os.path.join(skills_dir, repo_name)
-        if os.path.islink(link):
-            print(f"  {repo_name} -> {os.readlink(link)}")
-        else:
-            print(f"  {repo_name} (not linked)")
+        skill_name = prefix + repo_name
+        print(f"  {skill_name} [{status(skill_name, repo_dir)}] -> {repo_dir}")
     else:
         skills_path = rcfg.get('skills_path', '.')
-        scan_dir = repo_dir
-        if skills_path != '.':
-            scan_dir = os.path.join(scan_dir, skills_path)
+        scan_dir = os.path.join(repo_dir, skills_path) if skills_path != '.' else repo_dir
         found = False
         if os.path.isdir(scan_dir):
             for entry in sorted(os.listdir(scan_dir)):
                 skill_dir = os.path.join(scan_dir, entry)
                 if os.path.isdir(skill_dir) and os.path.isfile(os.path.join(skill_dir, 'SKILL.md')):
                     found = True
-                    link = os.path.join(skills_dir, entry)
-                    if os.path.islink(link):
-                        print(f"  {entry} -> {os.readlink(link)}")
-                    else:
-                        print(f"  {entry} (not linked)")
+                    skill_name = prefix + entry
+                    print(f"  {skill_name} [{status(skill_name, skill_dir)}] -> {skill_dir}")
         if not found:
             print("  (no skills found)")
     print()
@@ -193,15 +200,21 @@ done
 unset IFS
 
 # --- Phases 2-5: Discover, resolve conflicts, symlink, cleanup (all in Python) ---
-python3 - "$CONFIG_FILE" "$SCRIPT_DIR" "$CLONE_DIR_ABS" "$SKILLS_DIR" "$DRY_RUN" "$CLEANUP" <<'PYEOF'
+python3 - "$CONFIG_FILE" "$SCRIPT_DIR" "$CLONE_DIR_ABS" "$DRY_RUN" "$CLEANUP" <<'PYEOF'
 import yaml, os, sys
 
-config_file, script_dir, clone_dir, skills_dir, dry_run_str, cleanup_str = sys.argv[1:7]
+config_file, script_dir, clone_dir, dry_run_str, cleanup_str = sys.argv[1:6]
 dry_run = dry_run_str == "true"
 cleanup = cleanup_str == "true"
 
 with open(config_file) as f:
     cfg = yaml.safe_load(f)
+
+# skills_dir can be a string or a list of strings
+raw = cfg.get('skills_dir', '~/.claude/skills')
+if isinstance(raw, str):
+    raw = [raw]
+skills_dirs = [os.path.expanduser(p) for p in raw]
 
 # Colors
 RED, GREEN, YELLOW, BLUE, NC = (
@@ -283,62 +296,68 @@ if conflicts:
 
 print(f"  Found {len(skill_sources)} skills to install")
 
-# --- Phase 4: Create symlinks ---
+# --- Phase 4: Create symlinks (for each target dir) ---
 print(f"{BLUE}=== Phase 4: Create symlinks ==={NC}")
-os.makedirs(skills_dir, exist_ok=True)
 
-created = updated = skipped = 0
+for skills_dir in skills_dirs:
+    print(f"  {BLUE}Target:{NC} {skills_dir}")
+    os.makedirs(skills_dir, exist_ok=True)
 
-for skill in sorted(skill_sources):
-    source_dir = skill_sources[skill]
-    link = os.path.join(skills_dir, skill)
+    created = updated = skipped = 0
 
-    if os.path.exists(link) and not os.path.islink(link):
-        print(f"  {YELLOW}Skip:{NC} {skill} (target exists and is not a symlink)")
-        skipped += 1
-        continue
+    for skill in sorted(skill_sources):
+        source_dir = skill_sources[skill]
+        link = os.path.join(skills_dir, skill)
 
-    if os.path.islink(link):
-        current_target = os.readlink(link)
-        if current_target == source_dir:
+        if os.path.exists(link) and not os.path.islink(link):
+            print(f"    {YELLOW}Skip:{NC} {skill} (target exists and is not a symlink)")
             skipped += 1
             continue
-        print(f"  {GREEN}Update:{NC} {skill} -> {source_dir}")
-        if not dry_run:
-            os.remove(link)
-            os.symlink(source_dir, link)
-        updated += 1
-    else:
-        print(f"  {GREEN}Link:{NC} {skill} -> {source_dir}")
-        if not dry_run:
-            os.symlink(source_dir, link)
-        created += 1
 
-print(f"  Created: {created}, Updated: {updated}, Unchanged: {skipped}")
+        if os.path.islink(link):
+            current_target = os.readlink(link)
+            if current_target == source_dir:
+                skipped += 1
+                continue
+            print(f"    {GREEN}Update:{NC} {skill} -> {source_dir}")
+            if not dry_run:
+                os.remove(link)
+                os.symlink(source_dir, link)
+            updated += 1
+        else:
+            print(f"    {GREEN}Link:{NC} {skill} -> {source_dir}")
+            if not dry_run:
+                os.symlink(source_dir, link)
+            created += 1
 
-# --- Phase 5: Cleanup stale symlinks ---
+    print(f"    Created: {created}, Updated: {updated}, Unchanged: {skipped}")
+
+# --- Phase 5: Cleanup stale symlinks (for each target dir) ---
 if cleanup:
     print(f"{BLUE}=== Phase 5: Cleanup stale symlinks ==={NC}")
-    removed = 0
 
-    if os.path.isdir(skills_dir):
-        for entry in sorted(os.listdir(skills_dir)):
-            link = os.path.join(skills_dir, entry)
-            if not os.path.islink(link):
-                continue
-            target = os.readlink(link)
-            # Only remove symlinks pointing into our project
-            if target.startswith(clone_dir) or target.startswith(script_dir):
-                if entry not in skill_sources:
-                    print(f"  {RED}Remove stale:{NC} {entry} -> {target}")
-                    if not dry_run:
-                        os.remove(link)
-                    removed += 1
+    for skills_dir in skills_dirs:
+        print(f"  {BLUE}Target:{NC} {skills_dir}")
+        removed = 0
 
-    if removed == 0:
-        print("  No stale symlinks found")
-    else:
-        print(f"  Removed: {removed}")
+        if os.path.isdir(skills_dir):
+            for entry in sorted(os.listdir(skills_dir)):
+                link = os.path.join(skills_dir, entry)
+                if not os.path.islink(link):
+                    continue
+                target = os.readlink(link)
+                # Only remove symlinks pointing into our project
+                if target.startswith(clone_dir) or target.startswith(script_dir):
+                    if entry not in skill_sources:
+                        print(f"    {RED}Remove stale:{NC} {entry} -> {target}")
+                        if not dry_run:
+                            os.remove(link)
+                        removed += 1
+
+        if removed == 0:
+            print("    No stale symlinks found")
+        else:
+            print(f"    Removed: {removed}")
 
 if dry_run:
     print(f"\n{YELLOW}(dry-run mode - no changes were made){NC}")

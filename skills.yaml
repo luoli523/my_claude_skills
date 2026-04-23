@@ -2,7 +2,10 @@
 # Run ./install.sh to clone repos and create symlinks to ~/.claude/skills/
 
 clone_dir: .repos
-skills_dir: ~/.claude/skills
+# Skills symlinks 会同时创建到下列所有目录（Claude Code + Codex 等）
+skills_dir:
+  - ~/.claude/skills
+  - ~/.codex/skills
 
 repos:
   awesome-claude-skills:
