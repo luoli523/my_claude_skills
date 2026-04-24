@@ -10,7 +10,7 @@ references:
     usage: style
 ---
 
-Create a polished Chinese infographic.
+Create a polished infographic in {language}.
 
 ## Image Specs
 
@@ -18,7 +18,7 @@ Create a polished Chinese infographic.
 - Layout: {layout}
 - Style: {style}
 - Aspect ratio: {aspect}
-- Language: Chinese
+- Language: {language}
 
 ## Visual Direction
 
@@ -53,7 +53,7 @@ Use the bundled reference image as the character/style anchor. Integrate a recur
 
 ## Rendering Requirements
 
-- Chinese text must be legible and grouped correctly
+- Text in {language} must be legible and grouped correctly
 - Preserve all important numbers exactly
 - Use clear visual hierarchy
 - Keep the design dense but organized
@@ -64,6 +64,6 @@ Use the bundled reference image as the character/style anchor. Integrate a recur
 
 - The prompt references `refs/01-ref-guige.jpeg` in frontmatter.
 - The prompt includes the Gui Ge character traits in text.
-- The prompt includes the chosen layout, style, aspect ratio, and Chinese language requirement.
+- The prompt includes the chosen layout, style, aspect ratio, and selected language requirement.
 - The prompt includes the structured content and required labels.
-- The prompt explicitly asks for readable Chinese text and exact preservation of key numbers.
+- The prompt explicitly asks for readable text in the selected language and exact preservation of key numbers.
