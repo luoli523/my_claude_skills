@@ -109,6 +109,14 @@ BLUE, GREEN, YELLOW, NC = '\033[0;34m', '\033[0;32m', '\033[1;33m', '\033[0m'
 print(f"{BLUE}=== Managed Skills ==={NC}")
 print(f"Target skills dirs: {', '.join(skills_dirs)}\n")
 
+def has_valid_frontmatter(skill_dir):
+    skill_md = os.path.join(skill_dir, 'SKILL.md')
+    if not os.path.isfile(skill_md):
+        return False
+    with open(skill_md, encoding='utf-8') as f:
+        content = f.read()
+    return content.startswith('---\n') and '\n---\n' in content[4:]
+
 def status(skill_name, source_dir=None):
     """Return a compact per-dir link status string."""
     parts = []
@@ -127,10 +135,17 @@ def status(skill_name, source_dir=None):
 local_skills = cfg.get('local', [])
 if local_skills:
     print(f"{GREEN}Local skills:{NC}")
+    seen_local = set()
     for skill in local_skills:
+        if skill in seen_local:
+            print(f"  {skill} (duplicate entry)")
+            continue
+        seen_local.add(skill)
         source_dir = os.path.join(script_dir, skill)
-        if os.path.isdir(source_dir):
+        if os.path.isdir(source_dir) and has_valid_frontmatter(source_dir):
             print(f"  {skill} [{status(skill, source_dir)}] -> {source_dir}")
+        elif os.path.isdir(source_dir):
+            print(f"  {skill} (invalid SKILL.md frontmatter)")
         else:
             print(f"  {skill} (missing)")
     print()
@@ -221,6 +236,14 @@ RED, GREEN, YELLOW, BLUE, NC = (
     '\033[0;31m', '\033[0;32m', '\033[1;33m', '\033[0;34m', '\033[0m'
 )
 
+def has_valid_frontmatter(skill_dir):
+    skill_md = os.path.join(skill_dir, 'SKILL.md')
+    if not os.path.isfile(skill_md):
+        return False
+    with open(skill_md, encoding='utf-8') as f:
+        content = f.read()
+    return content.startswith('---\n') and '\n---\n' in content[4:]
+
 # --- Phase 2: Discover skills ---
 print(f"{BLUE}=== Phase 2: Discover skills ==={NC}")
 
@@ -275,16 +298,28 @@ for repo_name, rcfg in cfg.get('repos', {}).items():
             skill_repos[skill_name] = repo_name
 
 # Discover local skills (override repo skills)
+seen_local = set()
 for skill in cfg.get('local', []):
+    if skill in seen_local:
+        print(f"  {YELLOW}Warning:{NC} duplicate local skill '{skill}' skipped")
+        continue
+    seen_local.add(skill)
     local_dir = os.path.join(script_dir, skill)
+    if not os.path.isdir(local_dir):
+        print(f"  {YELLOW}Warning:{NC} local skill '{skill}' directory not found")
+        continue
+    if not os.path.isfile(os.path.join(local_dir, 'SKILL.md')):
+        print(f"  {YELLOW}Warning:{NC} local skill '{skill}' is missing SKILL.md")
+        continue
+    if not has_valid_frontmatter(local_dir):
+        print(f"  {YELLOW}Warning:{NC} local skill '{skill}' has invalid YAML frontmatter")
+        continue
     if os.path.isdir(local_dir):
         if skill in skill_sources:
             print(f"  {YELLOW}Local override:{NC} {skill} (replaces {skill_repos[skill]})")
         skill_sources[skill] = local_dir
         skill_repos[skill] = 'local'
         conflicts.pop(skill, None)
-    else:
-        print(f"  {YELLOW}Warning:{NC} local skill '{skill}' directory not found")
 
 # --- Phase 3: Conflict detection ---
 if conflicts:

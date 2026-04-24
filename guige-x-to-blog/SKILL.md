@@ -1,3 +1,9 @@
+---
+name: guige-x-to-blog
+description: "将 X 推文下载、整理并改写为中文博客文章，复用原图并按既有博客发布流程交付。触发词：/x-to-blog、x 推文转博客、tweet to blog。"
+version: 0.1.0
+---
+
 # X 推文转博客文章
 
 一键将 X 推文转为中文博客文章并发布到 luoli523.github.io。
